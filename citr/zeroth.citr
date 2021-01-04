@@ -1,0 +1,25 @@
+frameinterval 20
+
+[setup]
+  size 1280 720
+  j dt=0.02
+  fill 0 0 0
+  fillrect 0 0 1280 720
+  stroke 0 255 0
+  rect 1 1 1278 718
+[end]
+
+[draw]
+  v x=t*100
+  v y=360+50*sin(t)+20*sin(4*t)+10*sin(8*t)
+  oval x y 0.1 0.1
+  inc t dt
+[end]
+
+[keyPressed]
+  p keyCode
+  [if keyCode==KeyCode.Q]
+    p "bye!"
+    exit
+  [end]
+[end]
