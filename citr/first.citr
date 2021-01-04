@@ -1,0 +1,33 @@
+frameinterval 20
+j double cx=0
+j double cy=0
+j double r1=500
+j double r2=250
+
+[setup]
+  size 1280 720
+  j cx=1280/2
+  j cy=720/2
+  j dt=0.075
+  fill 0 0 0
+  fillrect 0 0 1280 720
+  stroke 255 192 0 0.4
+  rect 1 1 1278 718
+[end]
+
+[draw]
+  v x=cx+r1*cos(0.5*t)
+  v y=cy-r2*sin(t)
+  v lr=20
+  v a=lr*sin(0.5*t)
+  v b=lr*cos(0.25*t)
+  line x y x+a y+b
+  inc t dt
+[end]
+
+[keyPressed]
+  [if keyCode==KeyCode.Q]
+    p "bye!"
+    exit
+  [end]
+[end]

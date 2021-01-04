@@ -2,10 +2,10 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-echo "removing previous generated java source"
+echo "removing previously generated java source"
 rm -rf gen
 mkdir gen
-echo "making temporary copy..."
+echo "making temporary copy of $1.citr ..."
 cp citr/$1.citr .
 # generating java code
 python3 citraNabhASAsaMsAdhaka.py $1.citr gen

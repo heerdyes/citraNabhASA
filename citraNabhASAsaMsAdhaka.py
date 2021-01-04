@@ -28,11 +28,23 @@ def anuvadatu(ln):
   args=argstr.split(' ')
   genstmt=[]
   if cmd=='fill':
-    rgb=args
-    genstmt.append('gc.setFill(Color.rgb(%s,%s,%s));'%(rgb[0],rgb[1],rgb[2]))
+    rgba=args
+    if len(rgba)==3:
+      genstmt.append('gc.setFill(Color.rgb(%s,%s,%s));'%(rgba[0],rgba[1],rgba[2]))
+    elif len(rgba)==4:
+      genstmt.append('gc.setFill(Color.rgb(%s,%s,%s,%s));'%(rgba[0],rgba[1],rgba[2],rgba[3]))
+    else:
+      print('[error] %s'%ln)
+      raise Exception('unsupported rgba array length: %d'%len(rgba))
   elif cmd=='stroke':
-    rgb=args
-    genstmt.append('gc.setStroke(Color.rgb(%s,%s,%s));'%(rgb[0],rgb[1],rgb[2]))
+    rgba=args
+    if len(rgba)==3:
+      genstmt.append('gc.setStroke(Color.rgb(%s,%s,%s));'%(rgba[0],rgba[1],rgba[2]))
+    elif len(rgba)==4:
+      genstmt.append('gc.setStroke(Color.rgb(%s,%s,%s,%s));'%(rgba[0],rgba[1],rgba[2],rgba[3]))
+    else:
+      print('[error] %s'%ln)
+      raise Exception('unsupported rgba array length: %d'%len(rgba))
   elif cmd=='rect':
     xywh=args
     genstmt.append('gc.strokeRect(%s,%s,%s,%s);'%(xywh[0],xywh[1],xywh[2],xywh[3]))
