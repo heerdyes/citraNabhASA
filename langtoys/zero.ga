@@ -1,0 +1,8 @@
+# program 00
+let width be 600
+let height be 400
+let t be 0.0
+repeat 50 times
+  line 200 50+t 300 50+t
+  inc t 2
+end
