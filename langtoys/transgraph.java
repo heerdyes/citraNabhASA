@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 public class transgraph{
   static List<String> stmts=new ArrayList<String>();
   static HashMap<String,String> symtab=new HashMap<String,String>();
+  static List<String> staq=new ArrayList<String>();
+  static String INDENT_PREF="  ";
   
   static void d(String msg){
     System.out.println(msg);
@@ -25,28 +27,89 @@ public class transgraph{
     System.exit(0);
   }
   
-  static void rendercode(String tmplfn,String outfn,String clsnm){
+  static void push(String s){
+    staq.add(s);
+  }
+  
+  static String pop(){
+    if(staq.isEmpty()){
+      return null;
+    }
+    return staq.remove(staq.size()-1);
+  }
+  
+  static String top(){
+    if(staq.isEmpty()){
+      return null;
+    }
+    return staq.get(staq.size()-1);
+  }
+  
+  static String interpolateline(String ln){
+    int ptr=0;
+    String interpln=ln;
+    for(;;){
+      if(ptr>=ln.length()){break;}
+      int idx=ln.indexOf("#[",ptr);
+      if(idx==-1){break;}
+      int xbeg=idx+2;
+      int xend=ln.indexOf("]",xbeg);
+      if(xend==-1){throw new RuntimeException("expression did not end");}
+      String k=ln.substring(xbeg,xend);
+      String v=symtab.get(k);
+      if(v==null){throw new RuntimeException("no such global symbol: "+v);}
+      interpln=interpln.replace("#["+k+"]",v);
+      ptr=xend+1;
+    }
+    return interpln;
+  }
+  
+  static void rendercode(String tmplfn){
+    String outfn=symtab.get("outfn");
+    String clsnm=symtab.get("clsnm");
     try(
       FileWriter fw=new FileWriter(outfn);
       PrintWriter pw=new PrintWriter(fw);
     ){
       List<String> tlns=Files.readAllLines(Paths.get(tmplfn));
       for(String ln:tlns){
-        if(ln.contains("#[clsnm]")){
-          pw.printf("%s\n",ln.replace("#[clsnm]",clsnm));
-        }else if(ln.contains("#[genart]")){
-          int iloc=ln.indexOf("#[genart]");
+        if(ln.contains("$$genart$$")){
+          int iloc=ln.indexOf("$$genart$$");
           String prespace=ln.substring(0,iloc);
           for(String stmt:stmts){
             pw.printf("%s%s\n",prespace,stmt);
           }
         }else{
-          pw.println(ln);
+          String interpline=interpolateline(ln);
+          pw.println(interpline);
         }
       }
     }catch(Exception e){
       e.printStackTrace();
     }
+  }
+  
+  static String genindent(){
+    if(top()==null){
+      return "";
+    }
+    StringBuffer sb=new StringBuffer();
+    for(int i=0;i<staq.size();i++){
+      sb.append(INDENT_PREF);
+    }
+    return sb.toString();
+  }
+  
+  static String scope(){
+    String t=top();
+    if(t==null){
+      return "";
+    }
+    return t;
+  }
+  
+  static void processdirective(String car,String cdr){
+    d("TODO");
   }
   
   static void transmuteline(String ln){
@@ -63,30 +126,42 @@ public class transgraph{
     // no-ops
     if(line.length()==0) return;
     if(line.startsWith("#")) return;
+    // special-ops
+    if(car.startsWith("@")){
+      processdirective(car,cdr);
+      return;
+    }
     // commands
     if(car.equals("print")){
-      String jgen=String.format("System.out.println(%s);",cdr);
+      String jgen=String.format("%sSystem.out.println(%s);",genindent(),cdr);
       stmts.add(jgen);
     }else if(car.equals("let")){
       String[] args=cdr.split(" ");
       // validate let syntax
       if(!args[1].equals("be")){
-        String exmsg=String.format("let statement syntax violated. found '%s' instead of 'be'",args[1]);
+        String exmsg=String.format("%slet statement syntax violated. found '%s' instead of 'be'",genindent(),args[1]);
         throw new RuntimeException(exmsg);
       }
       String vnm=args[0];
       String vval=args[2];
-      String jgen=String.format("var %s=%s;",vnm,vval);
-      stmts.add(jgen);
+      if("global".equals(scope())){
+        symtab.put(vnm,vval);
+      }else{
+        String jgen=String.format("%svar %s=%s;",genindent(),vnm,vval);
+        stmts.add(jgen);
+      }
     }else if(car.equals("line")){
       String[] args=cdr.split(" ");
-      String jgen=String.format("gc.strokeLine(%s,%s,%s,%s);",args[0],args[1],args[2],args[3]);
+      String jgen=String.format("%sgc.strokeLine(%s,%s,%s,%s);",genindent(),args[0],args[1],args[2],args[3]);
       stmts.add(jgen);
     }else if(car.equals("inc")){
       String[] args=cdr.split(" ");
-      stmts.add(String.format("%s+=%s;",args[0],args[1]));
+      stmts.add(String.format("%s%s+=%s;",genindent(),args[0],args[1]));
     }else if(car.equals("end")){
-      stmts.add("}");
+      String currscope=pop();
+      if(!currscope.equals("global")){
+        stmts.add(String.format("%s}",genindent()));
+      }
     }else if(car.equals("repeat")){
       String[] args=cdr.split(" ");
       if(!args[1].equals("times")){
@@ -98,8 +173,16 @@ public class transgraph{
       }catch(NumberFormatException nfe){
         throw new RuntimeException("repeat command accepts only integers!");
       }
-      String jgen=String.format("for(int i=0;i<%s;i++){",args[0]);
+      String jgen=String.format("%sfor(int i=0;i<%s;i++){",genindent(),args[0]);
       stmts.add(jgen);
+      push("repeat");
+    }else if(car.equals("global")){
+      if("global".equals(scope())){
+        throw new RuntimeException("cannot nest global scopes!");
+      }
+      push("global");
+    }else if(car.equals("wait")){
+      stmts.add(String.format("%sThread.sleep(%s);",genindent(),cdr));
     }
   }
   
@@ -118,7 +201,9 @@ public class transgraph{
       for(String ln:lines){
         transmuteline(ln);
       }
-      rendercode("FXTemplate.java","zero.java","zero");
+      symtab.put("outfn",clsnm+".java");
+      symtab.put("clsnm",clsnm);
+      rendercode("FXTemplate.java");
     }catch(IOException e){
       e.printStackTrace();
     }

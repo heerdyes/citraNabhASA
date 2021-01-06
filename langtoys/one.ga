@@ -1,10 +1,10 @@
 # program 00
 global
-  let width be 800
+  let width be 900
   let height be 600
 end
 let t be 0
 repeat 50 times
-  line 200 50+t 300 50+t
+  line 200 50+1.5*t 300 50+t
   inc t 4
 end

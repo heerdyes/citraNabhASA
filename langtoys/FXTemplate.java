@@ -15,18 +15,22 @@ public class #[clsnm] extends Application {
 
   @Override
   public void start(Stage primaryStage) {
-    primaryStage.setTitle("Drawing Operations Test");
+    primaryStage.setTitle("ToyLanguages");
     Group root = new Group();
-    Canvas canvas = new Canvas(600, 400);
+    Canvas canvas = new Canvas(#[width], #[height]);
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    genart(gc);
+    try{
+      genart(gc);
+    }catch(Exception e){
+      e.printStackTrace();
+    }
     root.getChildren().add(canvas);
     primaryStage.setScene(new Scene(root));
     primaryStage.show();
   }
 
-  private void genart(GraphicsContext gc) {
-    #[genart]
+  private void genart(GraphicsContext gc) throws Exception {
+    $$genart$$
   }
   
 }
