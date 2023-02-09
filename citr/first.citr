@@ -26,7 +26,7 @@ j double r2=250
 [end]
 
 [keyPressed]
-  [if keyCode==KeyCode.Q]
+  [if keyCode==KeyCode.ESCAPE]
     p "bye!"
     exit
   [end]
