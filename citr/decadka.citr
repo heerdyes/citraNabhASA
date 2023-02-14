@@ -1,0 +1,47 @@
+frameinterval 20
+j double cx=0
+j double cy=0
+j double r=400
+j double z=5
+j double d=4
+j double ouf=0.125
+j double inf=0.125
+
+[setup]
+  size 1080 1080
+  j cx=1080/2
+  j cy=1080/2
+  j dt=0.075
+  fill 0 0 0
+  fillrect 0 0 1080 1080
+  stroke 255 192 0 0.4
+  rect 1 1 1080-2 1080-2
+[end]
+
+[draw]
+  oval cx-r cy-r r*2 r*2
+  fill 255 192 0 0.2
+  filloval cx-z cy-z z*2 z*2
+  v x0=cx+r*cos(Math.toRadians(90))
+  v y0=cy-r*sin(Math.toRadians(90))
+  v x1=cx+r*cos(Math.toRadians(90+120))
+  v y1=cy-r*sin(Math.toRadians(90+120))
+  v x2=cx+r*cos(Math.toRadians(90+240))
+  v y2=cy-r*sin(Math.toRadians(90+240))
+  line x0 y0 x1 y1
+  line x1 y1 x2 y2
+  line x2 y2 x0 y0
+  inc t dt
+[end]
+
+[keyPressed]
+  [if keyCode==KeyCode.ESCAPE]
+    p "bye!"
+    exit
+  [end]
+[end]
+
+[mousePressed]
+  p "saving image..."
+  save 1080 1080 img.png
+[end]

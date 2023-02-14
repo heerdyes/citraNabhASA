@@ -161,6 +161,9 @@ def j_kAlapAlaka(maincls):
 
 def j_FXImports():
   return [
+    'import java.io.*;',
+    'import java.awt.image.RenderedImage;',
+    'import javax.imageio.ImageIO;',
     'import javafx.application.Application;',
     'import javafx.scene.Scene;',
     'import javafx.scene.canvas.Canvas;',
@@ -173,6 +176,8 @@ def j_FXImports():
     'import javafx.scene.input.KeyEvent;',
     'import javafx.event.EventHandler;',
     'import javafx.scene.input.KeyCode;',
+    'import javafx.scene.image.WritableImage;',
+    'import javafx.embed.swing.SwingFXUtils;',
     'import java.util.List;',
     'import java.util.ArrayList;',
     'import java.util.Timer;',

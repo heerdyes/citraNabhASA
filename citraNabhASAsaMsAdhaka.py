@@ -74,6 +74,16 @@ def anuvadatu(ln):
     genstmt.append('gc.fillOval(%s,%s,%s,%s);'%(px,py,pw,ph))
   elif cmd=='frameinterval':
     genstmt.append('protected long frameinterval=%s;'%argstr)
+  elif cmd=='save':
+    genstmt.append('try {')
+    genstmt.append('  WritableImage wi = new WritableImage(%s, %s);'%(args[0], args[1]))
+    genstmt.append('  c.snapshot(null, wi);')
+    genstmt.append('  RenderedImage ri = SwingFXUtils.fromFXImage(wi, null);')
+    genstmt.append('  ImageIO.write(ri, "png", new File("%s"));'%(args[2]))
+    genstmt.append('}')
+    genstmt.append('catch (IOException ioe) {')
+    genstmt.append('  ioe.printStackTrace();')
+    genstmt.append('}')
   elif cmd=='exit':
     genstmt.append('System.exit(0);')
   else:
@@ -116,6 +126,8 @@ def procnode(jtarget,staq,line):
       mgen.parameters.append('KeyEvent e')
       mgen.statements.append('String key=e.getCharacter();')
       mgen.statements.append('KeyCode keyCode=e.getCode();')
+    elif kword=='mousePressed':
+      mgen.parameters.append('MouseEvent e')
     staq.append(mgen)
 
 # process the program

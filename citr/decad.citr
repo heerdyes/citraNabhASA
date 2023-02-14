@@ -1,0 +1,47 @@
+frameinterval 20
+j double cx=0
+j double cy=0
+j double r=300
+j double z=7
+j double d=4
+j double ouf=0.125
+j double inf=0.125
+
+[setup]
+  size 1280 720
+  j cx=1280/2
+  j cy=720/2
+  j dt=0.075
+  fill 0 0 0
+  fillrect 0 0 1280 720
+  stroke 255 192 0 0.4
+  rect 1 1 1278 718
+[end]
+
+[draw]
+  v xn=cx+(r-d)*cos(ouf*t)
+  v yn=cy-(r-d)*sin(ouf*t)
+  v xf=cx+(r+d)*cos(ouf*t)
+  v yf=cy-(r+d)*sin(ouf*t)
+  line xn yn xf yf
+  v xo=cx+z*cos(inf*t)
+  v yo=cy-z*sin(inf*t)
+  line cx cy xo yo
+  v x0=cx+r*cos(Math.toRadians(90))
+  v y0=cy-r*sin(Math.toRadians(90))
+  v x1=cx+r*cos(Math.toRadians(90+120))
+  v y1=cy-r*sin(Math.toRadians(90+120))
+  v x2=cx+r*cos(Math.toRadians(90+240))
+  v y2=cy-r*sin(Math.toRadians(90+240))
+  line x0 y0 x1 y1
+  line x1 y1 x2 y2
+  line x2 y2 x0 y0
+  inc t dt
+[end]
+
+[keyPressed]
+  [if keyCode==KeyCode.ESCAPE]
+    p "bye!"
+    exit
+  [end]
+[end]
