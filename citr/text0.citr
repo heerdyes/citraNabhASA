@@ -1,0 +1,23 @@
+frameinterval 20
+
+[setup]
+  size 1280 720
+  fill 0 0 0
+  fillrect 0 0 1280 720
+  stroke 255 192 0 1
+  rect 1 1 1280-2 720-2
+[end]
+
+[draw]
+  fill 0 0 0
+  fillrect 0 0 1280 720
+  fill 23 232 202
+  text 100 100 this is a piece of text
+[end]
+
+[keyPressed]
+  [if keyCode==KeyCode.ESCAPE]
+    p "bye!"
+    exit
+  [end]
+[end]

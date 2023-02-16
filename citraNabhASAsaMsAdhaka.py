@@ -74,6 +74,10 @@ def anuvadatu(ln):
     genstmt.append('gc.fillOval(%s,%s,%s,%s);'%(px,py,pw,ph))
   elif cmd=='frameinterval':
     genstmt.append('protected long frameinterval=%s;'%argstr)
+  elif cmd=='text':
+    tx,cdr=eattillspace(argstr)
+    ty,txts=eattillspace(cdr)
+    genstmt.append('gc.fillText("%s", %s, %s);'%(txts, tx, ty))
   elif cmd=='save':
     genstmt.append('try {')
     genstmt.append('  WritableImage wi = new WritableImage(%s, %s);'%(args[0], args[1]))
