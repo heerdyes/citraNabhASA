@@ -93,7 +93,7 @@ def j_keyPressed():
   mkp.parameters.append('KeyEvent e')
   mkpbody='''KeyCode kc=e.getCode();
 d(kc.toString());
-if(kc.equals(KeyCode.Q)){
+if(kc.equals(KeyCode.ESCAPE)){
   d("exiting...");
   System.exit(0);
 }'''
@@ -201,5 +201,8 @@ def j_vardecls():
     'protected double pmouseX=-1.0;',
     'protected double pmouseY=-1.0;',
     'protected double t=0.0;',
-    'protected double dt=0.05;'
+    'protected double dt=0.05;',
+    'protected long frameinterval=10;',
+    'protected int mouseX=0;',
+    'protected int mouseY=0;'
   ]

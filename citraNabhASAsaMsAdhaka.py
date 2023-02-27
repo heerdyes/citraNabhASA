@@ -73,7 +73,7 @@ def anuvadatu(ln):
     px,py,pw,ph=args[0],args[1],args[2],args[3]
     genstmt.append('gc.fillOval(%s,%s,%s,%s);'%(px,py,pw,ph))
   elif cmd=='frameinterval':
-    genstmt.append('protected long frameinterval=%s;'%argstr)
+    genstmt.append('frameinterval=%s;'%argstr)
   elif cmd=='text':
     tx,cdr=eattillspace(argstr)
     ty,txts=eattillspace(cdr)
